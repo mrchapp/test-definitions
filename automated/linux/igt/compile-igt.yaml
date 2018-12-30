@@ -1,0 +1,38 @@
+metadata:
+    name: lshw
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Compile intel gpu tools"
+    maintainer:
+        - arthur.sh@linaro.org
+    os:
+        - debian
+        - ubuntu
+    scope:
+        - functional
+    environment:
+        - lava-test-shell
+    devices:
+        - dragonboard-410c
+
+params:
+    # Test if lshw able to report the classes pre-defined in ${CLASSES}.
+    DEP_PKGS: "git build-essential automake xutils-dev libtool flex bison pkg-config x11proto-dri2-dev python3-pip python-docutils valgrind peg libpciaccess-dev libkmod-dev libprocps-dev libunwind-dev libdw-dev zlib1g-dev liblzma-dev libssl-dev libcairo-dev libpixman-1-dev libudev-dev libgsl-dev libasound2-dev libjson-c-dev libcurl4-openssl-dev libxrandr-dev libxv-dev libxmlrpc-c++8-dev libdrm-dev python3-mako"
+    PYTHON_PKG: "mako"
+    IGT_REPO: "https://gitlab.freedesktop.org/drm/igt-gpu-tools"
+
+run:
+    steps:
+#        - echo "******* initial df ********"; df -h
+#        - lava-test-case remove-X11 --shell apt -y remove x11-common
+#        - echo "******* Remove x11-common ********"; df -h
+        - echo "******* Disable display manager ********"; rm -f /etc/systemd/system/display-manager.service
+        - apt -y autoremove; apt update; ifconfig
+        - lava-test-case install-pkgs --shell  DEBIAN_FRONTEND=noninteractive apt-get -q -y install ${DEP_PKGS}
+        - /usr/sbin/locale-gen
+        - echo "******* After install required pkgs ********"; df -h
+        - lava-test-case clone-igt-surece --shell git clone ${IGT_REPO}
+        - ln -s `pwd`/igt-gpu-tools /igt-gpu-tools; cd igt-gpu-tools; ./autogen.sh; ./configure --enable-chamelium
+        - lava-test-case compile-igt --shell make -j4
+        - make install
+        - echo "******* After compile/install igt ********"; df -h
+
