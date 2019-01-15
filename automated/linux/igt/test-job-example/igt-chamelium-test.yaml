@@ -1,0 +1,46 @@
+device_type: dragonboard-410c
+job_name: DB410c igt chamelium test
+timeouts:
+  job:
+    minutes: 120
+  action:
+    minutes: 55
+  connection:
+    minutes: 2
+priority: medium
+visibility: public
+
+metadata:
+  source: https://git.linaro.org/people/arthur.she/test-definition.qa.git
+  path: automated/linux/igt/igt-chamelium-test.yaml
+
+actions:
+- deploy:
+    timeout:
+      minutes: 55
+    to: fastboot
+    images:
+      boot:
+        url: http://people.linaro.org/~arthur.she/images/db410c/debian/buster/boot-linaro-buster-dragonboard-410c-359.img.gz
+        compression: gz
+      rootfs:
+        url: http://people.linaro.org/~arthur.she/images/db410c/debian/buster/debian-alips-with-igt.img.gz
+        compression: gz
+        apply-overlay: true
+
+- boot:
+    prompts:
+    - 'root@linaro-alip:~#'
+    timeout:
+      minutes: 10
+    method: fastboot
+
+- test:
+    timeout:
+      minutes: 15
+    definitions:
+    - repository: https://git.linaro.org/people/arthur.she/test-definition.qa.git
+      from: git
+      path: automated/linux/igt/igt-chamelium-test.yaml
+      name: igt-chamelium-test
+
