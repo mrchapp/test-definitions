@@ -1,6 +1,5 @@
 #!/bin/bash
 
-TEST_LIST="tests/vc4_ci/vc4-chamelium.testlist"
 RESULT_LOG="result.log"
 
 generate_igtrc() {
@@ -18,6 +17,12 @@ ChameliumPortID=3
 EOF
 
 cd - > /dev/null 2>&1
+}
+
+generate_chamelium_testlist() {
+    echo "Generate test list"
+    TEST_LIST=igt-chamelium-test.testlist
+    ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga" | tee ${IGT_DIR}/${TEST_LIST}
 }
 
 usage() {
@@ -39,6 +44,8 @@ if [ -z "${CHAMELIUM_IP}" ] || [ -z "${HDMI_DEV_NAME}" ] || [ -z "${IGT_DIR}" ];
     usage
 fi
 
+TEST_SCRIPT="${IGT_DIR}/scripts/run-tests.sh"
+
 # generate ~/.igtrc
 if [ ! -f "~/.igtrc" ]; then
     echo "Generate ~/.igtrc"
@@ -47,8 +54,14 @@ fi
 # Download Piglit
 if [ ! -d "${IGT_DIR}/piglit" ]; then
     echo "Download Piglit.."
-    ${IGT_DIR}/scripts/run-tests.sh -d
+    ${TEST_SCRIPT} -d
 fi
+# If test list is not assigned, generate it
+if [ -z "${TEST_LIST}" ]; then
+    generate_chamelium_testlist
+fi
+
 # Run tests
-${IGT_DIR}/scripts/run-tests.sh -T ${IGT_DIR}/${TEST_LIST} -v | tee tmp.log
+echo "Run ${TEST_LIST}"
+${TEST_SCRIPT} -T ${IGT_DIR}/${TEST_LIST} -v | tee tmp.log
 cat tmp.log|grep -e '^pass' -e '^skip' -e '^fail'|awk -F':\ ' '{print $2" "$1}' > ${RESULT_LOG}

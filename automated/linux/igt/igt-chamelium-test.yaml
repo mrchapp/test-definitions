@@ -18,11 +18,15 @@ params:
     CHAMELIUM_IP: "192.168.29.200"
     HDMI_DEV_NAME: "HDMI-A-1"
     IGT_DIR: "/igt-gpu-tools"
-    TEST_LIST: "tests/vc4_ci/vc4-chamelium.testlist"
+    # If TEST_LIST is not assigned, it will generate it with all
+    # Chanelium HDMI related tests
+    #TEST_LIST: "tests/vc4_ci/vc4-chamelium.testlist"
+    TEST_LIST: ""
 
 run:
     steps:
         - cd ./automated/linux/igt
         - git config --global http.sslverify false
-        - ./igt-chamelium-test.sh -c ${CHAMELIUM_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} -t ${TEST_LIST}
+        - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
+        - ./igt-chamelium-test.sh -c ${CHAMELIUM_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
         - ../../utils/send-to-lava.sh result.log
