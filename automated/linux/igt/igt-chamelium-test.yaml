@@ -7,12 +7,12 @@ metadata:
     os:
         - debian
         - ubuntu
-        - OE
+        - openembedded
     scope:
         - functional
     devices:
         - dragonboard-410c
-        - beagleboard X15
+        - x15
 
 params:
     CHAMELIUM_IP: "192.168.29.200"
@@ -22,6 +22,7 @@ params:
     # Chanelium HDMI related tests
     #TEST_LIST: "tests/vc4_ci/vc4-chamelium.testlist"
     TEST_LIST: ""
+    TL: ""
 
 run:
     steps:

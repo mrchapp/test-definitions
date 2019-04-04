@@ -3,7 +3,9 @@
 RESULT_LOG="result.log"
 
 generate_igtrc() {
-cd ~
+cd "$HOME" || exit 1
+
+mkdir -p /root
 
 cat > ".igtrc" <<-EOF
 [Common]
@@ -16,14 +18,14 @@ URL=http://${CHAMELIUM_IP}:9992
 ChameliumPortID=3
 EOF
 
-cd - > /dev/null 2>&1
+cd - > /dev/null 2>&1 || exit 1
 }
 
 generate_chamelium_testlist() {
     echo "Generate test list"
     TEST_LIST=igt-chamelium-test.testlist
     # Skip Display Port/VGA and Suspend/Hibrnate related tests
-    ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee ${IGT_DIR}/${TEST_LIST}
+    ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee "${IGT_DIR}"/"${TEST_LIST}"
 }
 
 usage() {
@@ -48,7 +50,7 @@ fi
 TEST_SCRIPT="${IGT_DIR}/scripts/run-tests.sh"
 
 # generate ~/.igtrc
-if [ ! -f "~/.igtrc" ]; then
+if [ ! -f "$HOME/.igtrc" ]; then
     echo "Generate ~/.igtrc"
     generate_igtrc
 fi
@@ -64,5 +66,5 @@ fi
 
 # Run tests
 echo "Run ${TEST_LIST}"
-${TEST_SCRIPT} -T ${IGT_DIR}/${TEST_LIST} -v | tee tmp.log
-cat tmp.log|grep -e '^pass' -e '^skip' -e '^fail'|awk -F':\ ' '{print $2" "$1}' > ${RESULT_LOG}
+${TEST_SCRIPT} -T "${IGT_DIR}"/"${TEST_LIST}" -v | tee tmp.log
+grep -e '^pass' -e '^skip' -e '^fail' tmp.log|awk -F':\ ' '{print $2" "$1}' > ${RESULT_LOG}
