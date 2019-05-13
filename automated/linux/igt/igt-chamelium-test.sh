@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -ex
 
 RESULT_LOG="result.log"
 
