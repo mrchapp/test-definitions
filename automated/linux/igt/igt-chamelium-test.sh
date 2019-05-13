@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 RESULT_LOG="result.log"
 
 generate_igtrc() {
@@ -55,7 +56,7 @@ if [ ! -f "$HOME/.igtrc" ]; then
     generate_igtrc
 fi
 # Download Piglit
-git config --global http.postBuffer 1048576000
+git config --global http.postBuffer 157286400
 if [ ! -d "${IGT_DIR}/piglit" ]; then
     echo "Download Piglit.."
     ${TEST_SCRIPT} -d
