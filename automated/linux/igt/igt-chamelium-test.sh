@@ -8,7 +8,7 @@ DUMP_FRAMES_DIR="/root/dump-frames"
 generate_igtrc() {
 cd "$HOME" || exit 1
 
-mkdir -p ${DUMP_FRAMES_DIR}
+mkdir -p "${DUMP_FRAMES_DIR}"
 
 cat > ".igtrc" <<-EOF
 [Common]
