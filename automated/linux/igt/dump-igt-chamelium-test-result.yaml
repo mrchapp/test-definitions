@@ -33,5 +33,5 @@ run:
         - echo "*********************************************";
         - echo "************ Upload dump frames *************";
         - echo "*********************************************";
-        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u ${ARTIFACTORIAL_URL} -t ${ARTIFACTORIAL_TOKEN}; fi; fi
+        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
 

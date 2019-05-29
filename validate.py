@@ -10,8 +10,17 @@ run_pycodestyle = False
 try:
     import pycodestyle
     run_pycodestyle = True
-except ImportError:
-    print("pycodestyle is not available!")
+except ImportError as e:
+    print(e)
+    print("Install pycodestyle: pip3 install pycodestyle")
+    sys.exit(1)
+
+try:
+    import magic
+except ImportError as e:
+    print(e)
+    print("Install python-magic: pip3 install python-magic")
+    sys.exit(1)
 
 
 def print_stderr(message):
@@ -28,6 +37,7 @@ def publish_result(result_message_list, args):
         f.write("\n\n")
         f.close()
     except IOError as e:
+        print(e)
         print_stderr("Cannot write to result file: %s" % args.result_file)
     print_stderr(result_message)
 
@@ -71,7 +81,7 @@ def pycodestyle_check(filepath, args):
 
 
 def validate_yaml_contents(filepath, args):
-    def validate_lava_yaml(y, args):
+    def validate_testdef_yaml(y, args):
         result_message_list = []
         if 'metadata' not in y.keys():
             result_message_list.append("* METADATA [FAILED]: " + filepath)
@@ -124,15 +134,15 @@ def validate_yaml_contents(filepath, args):
         publish_result(["* YAMLVALIDCONTENTS [PASSED]: " + filepath + " - deleted"], args)
         return 0
     y = yaml.load(filecontent)
-    if 'metadata' in y.keys():
-        # lava yaml file
-        return validate_lava_yaml(y, args)
+    if 'run' in y.keys():
+        # test definition yaml file
+        return validate_testdef_yaml(y, args)
     elif 'skiplist' in y.keys():
         # skipgen yaml file
         return validate_skipgen_yaml(filepath, args)
     else:
-        publish_result(["* YAMLVALIDCONTENTS [FAILED]: " + filepath + " - Unknown yaml type detected"], args)
-        return 1
+        publish_result(["* YAMLVALIDCONTENTS [SKIPPED]: " + filepath + " - Unknown yaml type detected"], args)
+        return 0
 
 
 def validate_yaml(filename, args):
@@ -144,7 +154,7 @@ def validate_yaml(filename, args):
         publish_result(["* YAMLVALID [PASSED]: " + filename + " - deleted"], args)
         return 0
     try:
-        y = yaml.load(filecontent)
+        yaml.load(filecontent)
         message = "* YAMLVALID: [PASSED]: " + filename
         print_stderr(message)
     except yaml.YAMLError:
@@ -163,7 +173,9 @@ def validate_yaml(filename, args):
 def validate_shell(filename, ignore_options):
     ignore_string = ""
     if args.shellcheck_ignore is not None:
-        ignore_string = "-e %s" % " ".join(args.shellcheck_ignore)
+        # Exclude types of warnings in the following format:
+        # -e CODE1,CODE2..
+        ignore_string = "-e %s" % ",".join(args.shellcheck_ignore)
     if len(ignore_string) < 4:  # contains only "-e "
         ignore_string = ""
     cmd = 'shellcheck %s' % ignore_string
@@ -193,20 +205,23 @@ def validate_external(cmd, filename, prefix, args):
 
 
 def validate_file(args, path):
+    filetype = magic.from_file(path, mime=True)
     exitcode = 0
-    if path.endswith(".yaml"):
+    # libmagic takes yaml as 'text/plain', so use file extension here.
+    if path.endswith((".yaml", ".yml")):
         exitcode = validate_yaml(path, args)
         if exitcode == 0:
             # if yaml isn't valid there is no point in checking metadata
             exitcode = validate_yaml_contents(path, args)
-    elif run_pycodestyle and path.endswith(".py"):
+    elif run_pycodestyle and filetype == "text/x-python":
         exitcode = pycodestyle_check(path, args)
-    elif path.endswith(".php"):
+    elif filetype == "text/x-php":
         exitcode = validate_php(path, args)
-    elif path.endswith(".sh") or \
-            path.endswith("sh-test-lib") or \
-            path.endswith("android-test-lib"):
+    elif path.endswith('.sh') or filetype == "text/x-shellscript":
         exitcode = validate_shell(path, args)
+    else:
+        publish_result(["* UNKNOWN [SKIPPED]: " + path + " - Unknown file type detected: " + filetype], args)
+        return 0
     return exitcode
 
 
@@ -234,7 +249,7 @@ def main(args):
     if args.git_latest:
         # check if git exists
         git_status, git_result = subprocess.getstatusoutput(
-            "git show --name-only --format=''")
+            "git diff --name-only HEAD~1")
         if git_status == 0:
             filelist = git_result.split()
             exitcode = run_unit_tests(args, filelist)
