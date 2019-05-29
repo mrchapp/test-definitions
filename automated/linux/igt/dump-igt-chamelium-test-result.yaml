@@ -15,8 +15,8 @@ metadata:
         - x15
 
 params:
-    ARTIFACTORIAL_TOKEN: ""
-    ARTIFACTORIAL_URL: ""
+    UPLOAD_TOKEN: ""
+    UPLOAD_URL: ""
 
 run:
     steps:
@@ -33,5 +33,5 @@ run:
         - echo "*********************************************";
         - echo "************ Upload dump frames *************";
         - echo "*********************************************";
-        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
+        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${UPLOAD_URL}" -t "${UPLOAD_TOKEN}"; fi; fi
 
