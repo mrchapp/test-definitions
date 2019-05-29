@@ -1,0 +1,37 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: dump-igt-chamelium-test-result
+    description: "Dump igt-gpu-tools test result and upload artifact to artifactorial"
+    maintainer:
+        - arthur.she@linaro.org
+    os:
+        - debian
+        - ubuntu
+        - openembedded
+    scope:
+        - functional
+    devices:
+        - dragonboard-410c
+        - x15
+
+params:
+    ARTIFACTORIAL_TOKEN: ""
+    ARTIFACTORIAL_URL: ""
+
+run:
+    steps:
+        - ifconfig; pwd; ls
+        - if [ -n "`which html2text`" ]; then
+        - ls /usr/share/igt-gpu-tools/results
+        - echo "**********************************************";
+        - echo "************ Dump IGT test result ************";
+        - echo "**********************************************";
+        - ls /usr/share/igt-gpu-tools/results/html/results/*|sort -r|xargs html2text; fi
+        - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
+        - UPLOAD_TOOL=`../../utils/upload-to-artifactorial.sh`
+        - if [ -n "`ls /root/dump-frames/`" ];  then echo "Got error frames.." ; tar -C /root -zcf dump-frames.tar.gz dump-frames/;
+        - echo "*********************************************";
+        - echo "************ Upload dump frames *************";
+        - echo "*********************************************";
+        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u ${ARTIFACTORIAL_URL} -t ${ARTIFACTORIAL_TOKEN}; fi; fi
+
