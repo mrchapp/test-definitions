@@ -28,7 +28,7 @@ run:
         - echo "**********************************************";
         - ls /usr/share/igt-gpu-tools/results/html/results/*|sort -r|xargs html2text; fi
         - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
-        - UPLOAD_TOOL="../../utils/upload-to-artifactorial.sh"
+        - UPLOAD_TOOL="./automated/utils/upload-to-artifactorial.sh"
         - if [ -n "`ls /root/dump-frames/`" ];  then echo "Got error frames.." ; tar -C /root -zcf dump-frames.tar.gz dump-frames/;
         - echo "*********************************************";
         - echo "************ Upload dump frames *************";
