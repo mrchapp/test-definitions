@@ -23,6 +23,8 @@ params:
     #TEST_LIST: "tests/vc4_ci/vc4-chamelium.testlist"
     TEST_LIST: ""
     TL: ""
+    ARTIFACTORIAL_URL: ""
+    ARTIFACTORIAL_TOKEN: ""
 
 run:
     steps:
