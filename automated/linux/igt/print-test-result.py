@@ -8,6 +8,7 @@ def print_result(results):
     try:
         for test, content in results['tests'].iteritems():
             print '************************************************************************************************************************************'
+            print '<LAVA_SIGNAL_STARTTC %s>' % test
             print '%-15s %s' % ('Test:', test)
             print '%-15s %s' % ('Result:', content['result'])
             print '%-15s %s' % ('Command:', content['command'])
@@ -16,6 +17,8 @@ def print_result(results):
             print '%-15s %s' % ('Stdout:', content['out'].replace('\n', '\n                '))
             print '%-15s %s' % ('Stderr:', content['err'].replace('\n', '\n                '))
             print '%-15s %s' % ('dmesg:', content['dmesg'].replace('\n', '\n                '))
+            print '<LAVA_SIGNAL_TESTCASE TEST_CASE_ID=%s RESULT=%s>' % (test, content['result'])
+            print '<LAVA_SIGNAL_ENDTC %s>' % test
     except:
         print "Can not find required data"
 
@@ -33,5 +36,3 @@ if __name__ == '__main__':
         results = json.load(data)
 
     print_result(results)
-
-

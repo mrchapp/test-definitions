@@ -48,4 +48,4 @@ run:
         - echo "************ Upload dump frames *************";
         - echo "*********************************************";
         - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
-        - ../../utils/send-to-lava.sh result.log
+#        - ../../utils/send-to-lava.sh result.log
