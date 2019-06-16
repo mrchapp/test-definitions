@@ -7,8 +7,8 @@ import json
 def print_result(results):
     try:
         for test, content in results['tests'].iteritems():
-            print '************************************************************************************************************************************'
             print '<LAVA_SIGNAL_STARTTC %s>' % test
+            print '************************************************************************************************************************************'
             print '%-15s %s' % ('Test:', test)
             print '%-15s %s' % ('Result:', content['result'])
             print '%-15s %s' % ('Command:', content['command'])
