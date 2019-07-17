@@ -151,7 +151,7 @@ if [ -n "${SKIPLIST}" ]; then
     # shellcheck disable=SC2086
     for test_name in ${SKIPLIST}; do
         # shellcheck disable=SC2086
-        sed -i "/${test_name}/d" run_kselftest.sh
+        sed -i "s:\"${test_name}\":\"\":g" run_kselftest.sh
         echo "selftests: tmpskipdir: ${test_name}" >> target_skipfile.txt
     done
 fi
@@ -161,7 +161,7 @@ if [ -f "${SKIPFILE}" ] &&  [ -z "${SKIPLIST}" ]; then
     while read -r test_name; do
         case "${test_name}" in \#*) continue ;; esac
         # shellcheck disable=SC2086
-        sed -i "/${test_name}/d" run_kselftest.sh
+        sed -i "s:\"${test_name}\":\"\":g" run_kselftest.sh
         echo "selftests: tmpskipdir: ${test_name}" >> target_skipfile.txt
     done < "${SKIPFILE}"
 fi
