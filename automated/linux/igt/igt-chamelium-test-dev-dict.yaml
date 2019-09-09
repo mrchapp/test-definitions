@@ -30,16 +30,14 @@ run:
         - cd ./automated/linux/igt
         - git config --global http.sslverify false
         - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
-        - echo "Chamelium static IP address: ${CHAMELIUM_STATIC_IP}"
+        - echo -n "Chamelium static IP address: ";
+        - echo  ${CHAMELIUM_STATIC_IP};
         - ./igt-chamelium-test.sh -c ${CHAMELIUM_STATIC_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
         # Dump igt test result and upload artifact to Artifactorial
         - ifconfig; pwd; ls -l
-#        - if [ -n "`which html2text`" -a -d "/usr/share/igt-gpu-tools/results/html/" ]; then
-#        - ls /usr/share/igt-gpu-tools/results
         - echo "**********************************************";
         - echo "************ Dump IGT test result ************";
         - echo "**********************************************";
-#        - ls /usr/share/igt-gpu-tools/results/html/results/*|sort -r|xargs html2text; fi
         - bzcat /usr/share/igt-gpu-tools/results/results.json.bz2 | python print-test-result.py
         - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
         - UPLOAD_TOOL="../../utils/upload-to-artifactorial.sh"
@@ -48,4 +46,3 @@ run:
         - echo "************ Upload dump frames *************";
         - echo "*********************************************";
         - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
-#        - ../../utils/send-to-lava.sh result.log
