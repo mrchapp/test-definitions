@@ -1,0 +1,51 @@
+metadata:
+    format: Lava-Test Test Definition 1.0
+    name: igt-chamelium-test
+    description: "Run igt-gpu-tools with Chamelium for pixel formats testing"
+    maintainer:
+        - arthur.she@linaro.org
+    os:
+        - debian
+        - ubuntu
+        - openembedded
+    scope:
+        - functional
+    devices:
+        - dragonboard-410c
+        - x15
+
+params:
+    HDMI_DEV_NAME: "HDMI-A-1"
+    IGT_DIR: "/igt-gpu-tools"
+    # If TEST_LIST is not assigned, it will generate it with all
+    # Chanelium HDMI related tests
+    #TEST_LIST: "tests/vc4_ci/vc4-chamelium.testlist"
+    TEST_LIST: ""
+    TL: ""
+    ARTIFACTORIAL_URL: ""
+    ARTIFACTORIAL_TOKEN: ""
+
+run:
+    steps:
+        - cd ./automated/linux/igt
+        - git config --global http.sslverify false
+        - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
+        - echo "Chamelium static IP address: ${CHAMELIUM_STATIC_IP}"
+        - ./igt-chamelium-test.sh -c ${CHAMELIUM_STATIC_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
+        # Dump igt test result and upload artifact to Artifactorial
+        - ifconfig; pwd; ls -l
+#        - if [ -n "`which html2text`" -a -d "/usr/share/igt-gpu-tools/results/html/" ]; then
+#        - ls /usr/share/igt-gpu-tools/results
+        - echo "**********************************************";
+        - echo "************ Dump IGT test result ************";
+        - echo "**********************************************";
+#        - ls /usr/share/igt-gpu-tools/results/html/results/*|sort -r|xargs html2text; fi
+        - bzcat /usr/share/igt-gpu-tools/results/results.json.bz2 | python print-test-result.py
+        - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
+        - UPLOAD_TOOL="../../utils/upload-to-artifactorial.sh"
+        - if [ -d "/root/dump-frames/" -a -n "`ls /root/dump-frames/`" ];  then echo "Got error frames.." ; tar -C /root -zcf dump-frames.tar.gz dump-frames/;
+        - echo "*********************************************";
+        - echo "************ Upload dump frames *************";
+        - echo "*********************************************";
+        - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
+#        - ../../utils/send-to-lava.sh result.log
