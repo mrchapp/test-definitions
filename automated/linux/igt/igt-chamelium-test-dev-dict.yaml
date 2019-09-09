@@ -30,9 +30,9 @@ run:
         - cd ./automated/linux/igt
         - git config --global http.sslverify false
         - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
-        - echo -n "Chamelium static IP address: ";
-        - echo  ${CHAMELIUM_STATIC_IP};
-        - ./igt-chamelium-test.sh -c ${CHAMELIUM_STATIC_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
+        - CHAMELIUM_IP=`echo ${CHAMELIUM_STATIC_IP}`
+        - echo -n "Chamelium static IP address: ${CHAMELIUM_IP}";
+        - ./igt-chamelium-test.sh -c ${CHAMELIUM_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
         # Dump igt test result and upload artifact to Artifactorial
         - ifconfig; pwd; ls -l
         - echo "**********************************************";
