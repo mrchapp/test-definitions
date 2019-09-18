@@ -61,7 +61,7 @@ fi
 git config --global http.postBuffer 157286400
 if [ ! -d "${IGT_DIR}/piglit" ]; then
     echo "Download Piglit.."
-    ${TEST_SCRIPT} -d
+    time ${TEST_SCRIPT} -d
 fi
 # If test list is not assigned, generate it
 if [ -z "${TEST_LIST}" ]; then
