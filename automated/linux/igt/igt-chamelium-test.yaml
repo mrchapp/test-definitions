@@ -28,7 +28,6 @@ params:
 run:
     steps:
         - cd ./automated/linux/igt
-        - git config --global http.sslverify false
         - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
         # ${CHAMELIUM_STATIC_IP} is from LAVA device dictionary
         - CHAMELIUM_IP=${CHAMELIUM_STATIC_IP}
@@ -46,4 +45,3 @@ run:
         - echo "************ Upload dump frames *************";
         - echo "*********************************************";
         - ${UPLOAD_TOOL} -a "dump-frames.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi; fi
-        - ../../utils/send-to-lava.sh result.log
