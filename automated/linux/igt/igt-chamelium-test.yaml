@@ -29,8 +29,7 @@ run:
     steps:
         - cd ./automated/linux/igt
         - if [ -n "${TEST_LIST}" ]; then TL="-t ${TEST_LIST}"; fi
-        # ${CHAMELIUM_STATIC_IP} is from LAVA device dictionary
-        - CHAMELIUM_IP=${CHAMELIUM_STATIC_IP}
+        # ${CHAMELIUM_IP} is from LAVA device dictionary
         - ./igt-chamelium-test.sh -c ${CHAMELIUM_IP} -h ${HDMI_DEV_NAME} -d ${IGT_DIR} ${TL}
         # Dump igt test result and upload artifact to Artifactorial
         - ifconfig; pwd; ls -l
