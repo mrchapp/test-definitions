@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -ex
-
 RESULT_LOG="result.log"
 DUMP_FRAMES_DIR="/root/dump-frames"
 
@@ -31,6 +29,13 @@ generate_chamelium_testlist() {
     ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee "${IGT_DIR}"/"${TEST_LIST}"
 }
 
+generate_igt_all_testlist() {
+    echo "Generate igt all test list"
+    TEST_LIST=igt-all-test.testlist
+    # Skip Intel/AMD, Display Port/VGA and Suspend/Hibrnate related tests
+    ${TEST_SCRIPT} -l | grep -v "dp\|vga\|suspend\|hibernate\|i915\|amdgpu" | tee "${IGT_DIR}"/"${TEST_LIST}"
+}
+
 usage() {
     echo "usage: $0 -c <chamelium ip address> -h <HDMI device name> -d <igt-gpu-tools dir> [-t <test-list>]" 1>&2
     exit 1
@@ -52,6 +57,12 @@ fi
 
 TEST_SCRIPT="${IGT_DIR}/scripts/run-tests.sh"
 
+export IGT_TEST_ROOT="/usr/libexec/igt-gpu-tools"
+
+# new run-tests.sh needs '-p' to run the tests with piglit
+${TEST_SCRIPT} --help | grep -q '\-p' && TEST_SCRIPT="${TEST_SCRIPT} -p"
+
+
 # generate ~/.igtrc
 if [ ! -f "$HOME/.igtrc" ]; then
     echo "Generate ~/.igtrc"
@@ -66,7 +77,10 @@ fi
 # If test list is not assigned, generate it
 if [ -z "${TEST_LIST}" ]; then
     generate_chamelium_testlist
+elif [ "${TEST_LIST}" = "ALL" ]; then
+    generate_igt_all_testlist
 fi
+
 
 # Run tests
 echo "Run ${TEST_LIST}"
