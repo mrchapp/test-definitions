@@ -79,6 +79,8 @@ if [ -z "${TEST_LIST}" ]; then
     generate_chamelium_testlist
 elif [ "${TEST_LIST}" = "ALL" ]; then
     generate_igt_all_testlist
+elif [ -n "${TEST_LIST}" ];then
+    cp ${TEST_LIST} ${IGT_DIR}
 fi
 
 
