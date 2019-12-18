@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 RESULT_LOG="result.log"
 DUMP_FRAMES_DIR="/root/dump-frames"
 
@@ -23,7 +25,7 @@ cd - > /dev/null 2>&1 || exit 1
 }
 
 generate_chamelium_testlist() {
-    echo "Generate test list"
+    echo "Generate Chamelium test list"
     TEST_LIST=igt-chamelium-test.testlist
     # Skip Display Port/VGA and Suspend/Hibrnate related tests
     ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee "${IGT_DIR}"/"${TEST_LIST}"
@@ -60,13 +62,14 @@ export IGT_TEST_ROOT="/usr/libexec/igt-gpu-tools"
 ${TEST_SCRIPT} --help | grep -q '\-p' && TEST_SCRIPT="${TEST_SCRIPT} -p"
 
 if [ "${TEST_LIST}" == "CHAMELIUM" ]; then
-    # generate ~/.igtrc
+    echo "Going to test igt Chamelium test"
     if [ ! -f "$HOME/.igtrc" ]; then
         echo "Generate ~/.igtrc"
         generate_igtrc
     fi
     generate_chamelium_testlist
 else
+    echo "Going to test ${TEST_LIST}"
     cp ${TEST_LIST} ${IGT_DIR}
 fi
 
