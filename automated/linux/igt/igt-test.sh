@@ -61,6 +61,13 @@ export IGT_TEST_ROOT="/usr/libexec/igt-gpu-tools"
 # new run-tests.sh needs '-p' to run the tests with piglit
 ${TEST_SCRIPT} --help | grep -q '\-p' && TEST_SCRIPT="${TEST_SCRIPT} -p"
 
+# Download Piglit
+git config --global http.postBuffer 157286400
+if [ ! -d "${IGT_DIR}/piglit" ]; then
+    echo "Download Piglit.."
+    time ${TEST_SCRIPT} -d
+fi
+
 if [ "${TEST_LIST}" == "CHAMELIUM" ]; then
     echo "Going to test igt Chamelium test"
     if [ ! -f "$HOME/.igtrc" ]; then
@@ -71,13 +78,6 @@ if [ "${TEST_LIST}" == "CHAMELIUM" ]; then
 else
     echo "Going to test ${TEST_LIST}"
     cp ${TEST_LIST} ${IGT_DIR}
-fi
-
-# Download Piglit
-git config --global http.postBuffer 157286400
-if [ ! -d "${IGT_DIR}/piglit" ]; then
-    echo "Download Piglit.."
-    time ${TEST_SCRIPT} -d
 fi
 
 # Run tests
