@@ -17,7 +17,7 @@ metadata:
 params:
     HDMI_DEV_NAME: "HDMI-A-1"
     IGT_DIR: "/igt-gpu-tools"
-    # Chanelium HDMI related tests
+    # TEST_LIST: "CHAMELIUM" will run Chamelium test
     TEST_LIST: "CHAMELIUM"
     ARTIFACTORIAL_URL: ""
     ARTIFACTORIAL_TOKEN: ""
