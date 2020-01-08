@@ -68,12 +68,16 @@ if [ ! -f "$HOME/.igtrc" ]; then
     echo "Generate ~/.igtrc"
     generate_igtrc
 fi
+echo "Before download piglit"
+df -h
 # Download Piglit
 git config --global http.postBuffer 157286400
 if [ ! -d "${IGT_DIR}/piglit" ]; then
     echo "Download Piglit.."
     time ${TEST_SCRIPT} -d
 fi
+echo "After download piglit"
+df -h
 # If test list is not assigned, generate it
 if [ -z "${TEST_LIST}" ]; then
     generate_chamelium_testlist
