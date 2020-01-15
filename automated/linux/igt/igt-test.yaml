@@ -29,7 +29,7 @@ run:
         # Check if Chamelium is available
         - CHAMELIUM_REBOOT_ARG=`echo ${CHAMELIUM_REBOOT}|awk '{$1=""; print $0}'`
         - while [ ${CHAMELIUM_PING_RETRY} -gt 0 ]; do ping -c 2 ${CHAMELIUM_IP}; if [ $? -ne 0 ]; then ./control_chamelium.py ${CHAMELIUM_REBOOT_ARG}; (( CHAMELIUM_PING_RETRY-- )); else break; fi; done
-        - [ ${CHAMELIUM_PING_RETRY} -gt 0 ] && lava-test-case "Ping-Chamelium" --result pass || lava-test-raise "Ping-Chamelium"
+        - test ${CHAMELIUM_PING_RETRY} -gt 0 && lava-test-case "Ping-Chamelium" --result pass || lava-test-raise "Ping-Chamelium"
         - OPT="-d ${IGT_DIR} -t ${TEST_LIST}"
         # ${CHAMELIUM_IP} is from LAVA device dictionary
         - if [ -n "${CHAMELIUM_IP}" ]; then OPT="${OPT} -c ${CHAMELIUM_IP}"; fi
