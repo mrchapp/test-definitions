@@ -56,6 +56,7 @@ fi
 
 TEST_SCRIPT="${IGT_DIR}/scripts/run-tests.sh"
 
+export GIT_SSL_NO_VERIFY=1
 export IGT_TEST_ROOT="/usr/libexec/igt-gpu-tools"
 
 # new run-tests.sh needs '-p' to run the tests with piglit
