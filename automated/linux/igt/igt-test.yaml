@@ -27,7 +27,6 @@ run:
     steps:
         - cd ./automated/linux/igt
         # Check if Chamelium is available
-        - CHAMELIUM_REBOOT_ARG=`echo ${CHAMELIUM_REBOOT}|awk '{$1=""; print $0}'`
         - while [ ${CHAMELIUM_PING_RETRY} -gt 0 ]; do PC=`ping -c 2 ${CHAMELIUM_IP}|grep '100% packet loss'`||true; if [ -n "${PC}" ]; then ./control_chamelium.py ${CHAMELIUM_REBOOT_ARG}; sleep 30; (( CHAMELIUM_PING_RETRY-- )); else break; fi; done
         - test ${CHAMELIUM_PING_RETRY} -gt 0 && lava-test-case "Ping-Chamelium" --result pass || lava-test-raise "Ping-Chamelium"
         - OPT="-d ${IGT_DIR} -t ${TEST_LIST}"
