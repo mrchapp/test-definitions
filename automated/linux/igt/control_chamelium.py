@@ -12,7 +12,7 @@ def send_cmd(hostname, port, cmd):
     oid=CONTROL_OID + str(port)
     errorIndication, errorStatus, errorIndex, varBinds = next(
         setCmd(SnmpEngine(),
-               CommunityData('private'),
+               CommunityData('private', mpModel=0),
                UdpTransportTarget((hostname, 161)),
                ContextData(),
                ObjectType(ObjectIdentity(oid), Integer(SWITCH[cmd])))
