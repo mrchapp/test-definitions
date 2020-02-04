@@ -32,6 +32,8 @@ run:
         - OPT="-d ${IGT_DIR} -t ${TEST_LIST}"
         # Check Chamelium uboot console status
         - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP} /usr/bin/lock_u_boot_console
+        # Showing the uptime of Chamelium
+        - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP} /usr/bin/uptime
         # ${CHAMELIUM_IP} is from LAVA device dictionary
         - if [ -n "${CHAMELIUM_IP}" ]; then OPT="${OPT} -c ${CHAMELIUM_IP}"; fi
         - if [ -n "${HDMI_DEV_NAME}" ]; then OPT="${OPT} -h ${HDMI_DEV_NAME}"; fi
