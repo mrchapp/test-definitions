@@ -36,6 +36,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     with args.json_file as data:
-        results = json.load(data)
+        results = json.load(data, encoding="utf-8")
 
     print_result(results)
