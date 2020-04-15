@@ -21,6 +21,7 @@ ${CMD} | tee ${LOG_FILE} 2>&1
 grep "ms)$" ${LOG_FILE} | \
   sed -e 's/\ (.*)$//' \
       -e 's/[[:space:]]*//g' \
+      -e 's/=//' \
       -e 's/\[OK\]/pass:/' \
       -e 's/\[FAILED\]/fail:/' | \
   awk -F: '{print $2" "$1}' \
