@@ -12,8 +12,18 @@ metadata:
     devices:
         - imx8mq
 
+params:
+    ARTIFACTORIAL_URL: ""
+    ARTIFACTORIAL_TOKEN: ""
+    UPLOAD_TOOL: "../../utils/upload-to-artifactorial.sh"
+    LOG_FILE: "widevine_ce_cdm_unittest.log"
+
 run:
     steps:
         - cd ./automated/linux/widevine/
-        - ./widevine_unittest.sh
+        - ./widevine_unittest.sh > ${LOG_FILE}
         - ../../utils/send-to-lava.sh result.txt
+        - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
+        - gzip ${LOG_FILE}
+        - ${UPLOAD_TOOL} -a "${LOG_FILE}.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi
+

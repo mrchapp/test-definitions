@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 
 CMD="/usr/bin/widevine_ce_cdm_unittest"
 LOG_FILE="log.txt"
@@ -15,7 +16,7 @@ if `grep -q "loading shared libraries" ${LOG_FILE}` ; then
     ln -s /usr/lib/${lib_name} ${dest_dir}
 fi
 
-${CMD} > ${LOG_FILE} 2>&1
+${CMD} | tee ${LOG_FILE} 2>&1
 
 grep "ms)$" ${LOG_FILE} | \
   sed -e 's/\ (.*)$//' \
