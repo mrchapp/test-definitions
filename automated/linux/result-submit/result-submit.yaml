@@ -1,0 +1,23 @@
+metadata:
+    name: result-submit
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "result submit test"
+    maintainer:
+        - arthur.she@linaro.org
+    os:
+        - openembedded
+        - debian
+    scope:
+        - functional
+    devices:
+        - imx8mq
+        - lxc
+
+params:
+    RESULT_FILE_URL: ""
+
+run:
+    steps:
+        - cd ./automated/linux/result-submit/
+        - wget ${RESULT_FILE_URL} -O result.txt
+        - if [ -f "result.txt" ]; then ../../utils/send-to-lava.sh result.txt fi
