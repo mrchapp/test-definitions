@@ -1,0 +1,19 @@
+metadata:
+    name: widevine_unittest
+    format: "Lava-Test-Shell Test Definition 1.0"
+    description: "Widevine ce_cdm unit test"
+    maintainer:
+        - arthur.she@linaro.org
+    os:
+        - openembedded
+        - debian
+    scope:
+        - functional
+    devices:
+        - imx8mq
+
+run:
+    steps:
+        - cd ./automated/linux/widevine/
+        - ./widevine_unittest.sh
+        - ../../utils/send-to-lava.sh result.txt
