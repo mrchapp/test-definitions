@@ -20,4 +20,4 @@ run:
     steps:
         - cd ./automated/linux/result-submit/
         - wget ${RESULT_FILE_URL} -O result.txt
-        - if [ -f "result.txt" ]; then ../../utils/send-to-lava.sh result.txt fi
+        - if [ -f "result.txt" ]; then ../../utils/send-to-lava.sh result.txt; fi
