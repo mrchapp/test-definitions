@@ -1,11 +1,24 @@
 #!/bin/sh
-#set -x
+set -x
 
 CMD="/usr/bin/widevine_ce_cdm_unittest"
 LOG_FILE="log.txt"
 RESULT_FILE="result.txt"
 
-${CMD} | tee ${LOG_FILE} 2>&1
+usage() {
+    echo "Usage: $0 [-l <log file> -r <test result file>]" 1>&2
+    exit 1
+}
+
+while getopts "l:r:h" o; do
+  case "$o" in
+    l) LOG_FILE="${OPTARG}" ;;
+    r) RESULT_FILE="${OPTARG}" ;;
+    h|*) usage ;;
+  esac
+done
+
+${CMD} > ${LOG_FILE} 2>&1
 
 # Fix can not loding shared libraries error
 if `grep -q "error while loading shared libraries" ${LOG_FILE}` ; then
@@ -15,7 +28,7 @@ if `grep -q "error while loading shared libraries" ${LOG_FILE}` ; then
     mkdir -p ${dest_dir}
     ln -s /usr/lib/${lib_name} ${dest_dir}
     # Run the command again
-    ${CMD} | tee ${LOG_FILE} 2>&1
+    ${CMD} > ${LOG_FILE} 2>&1
 fi
 
 grep "ms)$" ${LOG_FILE} | \

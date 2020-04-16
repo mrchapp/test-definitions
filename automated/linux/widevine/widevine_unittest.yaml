@@ -17,12 +17,13 @@ params:
     ARTIFACTORIAL_TOKEN: ""
     UPLOAD_TOOL: "../../utils/upload-to-artifactorial.sh"
     LOG_FILE: "widevine_ce_cdm_unittest.log"
+    RESULT_FILE: "result.txt"
 
 run:
     steps:
         - cd ./automated/linux/widevine/
-        - ./widevine_unittest.sh | tee ${LOG_FILE}
-        - ../../utils/send-to-lava.sh result.txt
+        - ./widevine_unittest.sh -l ${LOG_FILE} -r ${RESULT_FILE}
+        - ../../utils/send-to-lava.sh ${RESULT_FILE}
         # Upload log file to artifactirial
         - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
         - gzip ${LOG_FILE}
