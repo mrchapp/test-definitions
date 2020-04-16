@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+#set -x
 
 CMD="/usr/bin/widevine_ce_cdm_unittest"
 LOG_FILE="log.txt"
