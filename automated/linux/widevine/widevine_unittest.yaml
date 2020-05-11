@@ -10,7 +10,7 @@ metadata:
     scope:
         - functional
     devices:
-        - imx8mq
+        - imx8mq-evk
 
 params:
     ARTIFACTORIAL_URL: ""
@@ -25,7 +25,7 @@ run:
         - ./widevine_unittest.sh -l ${LOG_FILE} -r ${RESULT_FILE}
         - ../../utils/send-to-lava.sh ${RESULT_FILE}
         # Upload log file to artifactirial
-        - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
+        - if [ -f "${LOG_FILE}" -a -n "${ARTIFACTORIAL_URL}" ]; then
         - gzip ${LOG_FILE}
         - ${UPLOAD_TOOL} -a "${LOG_FILE}.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"; fi
 
