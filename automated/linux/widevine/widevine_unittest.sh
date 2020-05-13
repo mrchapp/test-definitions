@@ -18,24 +18,29 @@ while getopts "l:r:h" o; do
   esac
 done
 
-${CMD} > ${LOG_FILE} 2>&1
-
-# Fix can not loding shared libraries error
-if `grep -q "error while loading shared libraries" ${LOG_FILE}` ; then
-    lib=`cat ${LOG_FILE} | awk -F: '{print $3}'`
-    dest_dir=`dirname ${lib}`
-    lib_name=`basename ${lib}`
-    mkdir -p ${dest_dir}
-    ln -s /usr/lib/${lib_name} ${dest_dir}
-    # Run the command again
-    ${CMD} > ${LOG_FILE} 2>&1
+if [ ! -f "${CMD}" ]; then
+    echo "Can not find ${CMD}"
+    exit 1
 fi
 
-grep "ms)$" ${LOG_FILE} | \
+${CMD} > "${LOG_FILE}" 2>&1
+
+# Fix can not loding shared libraries error
+if grep -q "error while loading shared libraries" "${LOG_FILE}" ; then
+    lib=$(awk -F: '{print $3}' "${LOG_FILE}")
+    dest_dir=$(dirname "${lib}")
+    lib_name=$(basename "${lib}")
+    mkdir -p "${dest_dir}"
+    ln -s /usr/lib/"${lib_name}" "${dest_dir}"
+    # Run the command again
+    ${CMD} > "${LOG_FILE}" 2>&1
+fi
+
+grep "ms)$" "${LOG_FILE}" | \
   sed -e 's/\ (.*)$//' \
       -e 's/[[:space:]]*//g' \
       -e 's/=//' \
       -e 's/\[OK\]/pass:/' \
       -e 's/\[FAILED\]/fail:/' | \
   awk -F: '{print $2" "$1}' \
-  > ${RESULT_FILE}
+  > "${RESULT_FILE}"
