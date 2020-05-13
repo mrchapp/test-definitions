@@ -27,7 +27,7 @@ ${CMD} > "${LOG_FILE}" 2>&1
 
 # Fix can not loding shared libraries error
 if grep -q "error while loading shared libraries" "${LOG_FILE}" ; then
-    lib=$(awk -F: '{print $3}' "${LOG_FILE}")
+    lib=$(awk -F: '{print $3}' "${LOG_FILE}" | sed 's/[[:space:]]//')
     dest_dir=$(dirname "${lib}")
     lib_name=$(basename "${lib}")
     mkdir -p "${dest_dir}"
