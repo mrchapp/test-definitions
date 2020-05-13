@@ -28,6 +28,6 @@ run:
         - ../../utils/send-to-lava.sh ${RESULT_FILE}
         # Upload log file to artifactirial
         - if [ -f "${LOG_FILE}" -a -n "${UPLOAD_URL}" ]; then
-        - which gzip >/dev/null && gzip ${LOG_FILE} && LOG_FILE=${LOG_FILE}.gz || true
+        - gzip ${LOG_FILE} && LOG_FILE=${LOG_FILE}.gz || true
         - ${UPLOAD_TOOL} -a "${LOG_FILE}" -u "${UPLOAD_URL}" -t "${TOKEN}"; fi
 
