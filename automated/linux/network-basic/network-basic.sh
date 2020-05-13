@@ -5,16 +5,18 @@
 OUTPUT="$(pwd)/output"
 RESULT_FILE="${OUTPUT}/result.txt"
 export RESULT_FILE
+NFS="false"
 
 usage() {
-    echo "Usage: $0 [-s <true|false>] [-i <interface>]" 1>&2
+    echo "Usage: $0 [-s <true|false>] [-i <interface>] [-n <true|false>]" 1>&2
     exit 1
 }
 
-while getopts "s:i:" o; do
+while getopts "s:i:n:" o; do
   case "$o" in
     s) SKIP_INSTALL="${OPTARG}" ;;
     i) INTERFACE="${OPTARG}" ;;
+    n) NFS="${OPTARG}" ;;
     *) usage ;;
   esac
 done
@@ -50,7 +52,15 @@ run "route" "print-routing-tables"
 run "ip link set lo up" "ip-link-loopback-up"
 run "route" "route-dump-after-ip-link-loopback-up"
 run "ip link set ${INTERFACE} up" "ip-link-interface-up"
-run "ip link set ${INTERFACE} down" "ip-link-interface-down"
+# NFS mounted filesystem hangs when interface set down
+# so skip "ip link set <interface> down" when NFS is not false
+
+if [ "${NFS}" = "false" ] || [ "${NFS}" = "False" ]; then
+    run "ip link set ${INTERFACE} down" "ip-link-interface-down"
+else
+    info_msg "Skipping ip link set ${INTERFACE} down on NFS mounted file systems"
+    report_skip "ip-link-interface-down"
+fi
 
 dist_name
 # shellcheck disable=SC2154
@@ -67,4 +77,4 @@ esac
 run "dhclient -v ${INTERFACE}" "Dynamic-Host-Configuration-Protocol-Client-dhclient-v"
 run "route" "print-routing-tables-after-dhclient-request"
 run "ping -c 5 ${GATEWAY}" "ping-gateway"
-run "curl http://samplemedia.linaro.org/MPEG4/big_buck_bunny_720p_MPEG4_MP3_25fps_3300K.AVI -o ${OUTPUT}/curl_big_video.avi" "download-a-file"
+run "curl http://samplemedia.linaro.org/MPEG4/big_buck_bunny_480p_MPEG4_MP3_25fps_1600K_short.AVI -o ${OUTPUT}/curl_big_video.avi" "download-a-file"

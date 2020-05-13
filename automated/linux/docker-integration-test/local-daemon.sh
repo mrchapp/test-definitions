@@ -26,7 +26,7 @@ while getopts "r:s:h" opt; do
     esac
 done
 
-if "${SKIP_INSTALL}"; then
+if [ "${SKIP_INSTALL}" = "true" ] || [ "${SKIP_INSTALL}" = "True" ]; then
     info_msg "Software installation skipped"
     # Check if required software pre-installed.
     pkgs="git make docker"
@@ -44,7 +44,7 @@ else
     fi
 fi
 
-git clone https://github.com/docker/docker-ce
+git clone --depth 1 --branch "${RELEASE}" https://github.com/docker/docker-ce
 cd docker-ce/components/engine/
 git checkout "${RELEASE}" -b "${RELEASE}-test"
 # Enable shell xtrace and continue on test failure.

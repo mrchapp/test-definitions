@@ -34,10 +34,10 @@ params:
     # Specify the failures number to be printed
     FAILURES_PRINTED: "0"
     TEST_REBOOT_EXPECTED: "false"
-    # setup.sh determines JDK version by Android version.
-    # Here are some examples for the param, see setup.sh for more details.
-    # ANDROID_VERSION: android-8.1.0_r33
-    # ANDROID_VERSION: aosp-master
+    # used to specify the android version
+    # as different jdk version might be used for different android version cts/vts test
+    # aosp-master version needs to use openjdk-11, other older versions needs to use openjdk-8
+    # for aosp master version, the value of ANDROID_VERSION must have aosp-master in its value
     ANDROID_VERSION: ""
 
 run:
@@ -51,7 +51,8 @@ run:
         # create test use to run the cts/vts tests
         - useradd -m testuser && echo "testuser created successfully"
         - chown testuser:testuser .
-        - if [ "X${TEST_REBOOT_EXPECTED}" = "Xtrue" ]; then ./monitor_fastboot.sh & fi
+        - if echo "${TEST_REBOOT_EXPECTED}" |grep -i "true" ; then ./monitor_fastboot.sh & fi
+        - ./monitor_adb.sh &
         - sudo -u testuser ./tradefed.sh  -o "${TIMEOUT}" -c "${TEST_URL}" -t "${TEST_PARAMS}" -p "${TEST_PATH}" -r "${RESULTS_FORMAT}" -n "${ANDROID_SERIAL}" -f "${FAILURES_PRINTED}" -a "${AP_SSID}" -k "${AP_KEY}"
         # Upload test log and result files to artifactorial.
         - cp -r ./${TEST_PATH}/results ./output/ || true
@@ -66,4 +67,5 @@ run:
         - userdel testuser -f -r || true
         # When adb device lost, end test job to mark it as 'incomplete'.
         - if ! adb shell echo ok; then error_fatal "adb device $ANDROID_SERIAL lost!"; fi
-        - if [ "X${TEST_REBOOT_EXPECTED}" = "Xtrue" ]; then killall monitor_fastboot.sh; fi
+        - if echo "${TEST_REBOOT_EXPECTED}" |grep -i "true" ; then killall monitor_fastboot.sh; fi
+        - killall monitor_adb.sh

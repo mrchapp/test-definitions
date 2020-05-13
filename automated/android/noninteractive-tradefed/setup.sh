@@ -5,20 +5,15 @@
 . ../../lib/sh-test-lib
 . ../../lib/android-test-lib
 
-# ANDROID_VERSION was set in the format like change here:
-# https://review.linaro.org/#/c/ci/job/configs/+/29367/
-if [ -z "${ANDROID_VERSION}" ]; then
-    # install jdk8 when nothing specified
-    # to avoid regression
-    JDK="openjdk-8-jdk-headless"
-elif echo "${ANDROID_VERSION}" | grep -q  "android-8\." ; then
-    # install jdk8 for Oreo builds, both 8.0 and 8.1
-    JDK="openjdk-8-jdk-headless"
-else
-    # Use Jdk9 for all other builds
-    JDK="openjdk-9-jdk-headless"
+JDK="openjdk-8-jdk-headless"
+if [ -n "${ANDROID_VERSION}" ] && echo "${ANDROID_VERSION}" | grep -q  "aosp-master"; then
+    # only use openjdk-11 for aosp master version
+    JDK="openjdk-11-jdk-headless"
+#elif 8.1/9.0/android10
+#   JDK="openjdk-8-jdk-headless"
 fi
-PKG_DEPS="usbutils curl wget zip xz-utils python-lxml python-setuptools python-pexpect aapt lib32z1-dev libc6-dev-i386 lib32gcc1 libc6:i386 libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 python-dev python-protobuf protobuf-compiler python-virtualenv python-pip python-pexpect psmisc"
+
+PKG_DEPS="coreutils usbutils curl wget zip xz-utils python-lxml python-setuptools python-pexpect aapt lib32z1-dev libc6-dev-i386 lib32gcc1 libc6:i386 libstdc++6:i386 libgcc1:i386 zlib1g:i386 libncurses5:i386 python-dev python-protobuf protobuf-compiler python-virtualenv python-pip python-pexpect psmisc"
 
 dist_name
 case "${dist}" in

@@ -30,6 +30,7 @@ usage() {
     echo "Usage: ${0} [-T mm,math,syscalls]
                       [-S skipfile-lsk-juno]
                       [-b board]
+                      [-d temp directory]
                       [-g branch]
                       [-e environment]
                       [-s True|False]
@@ -39,7 +40,7 @@ usage() {
     exit 0
 }
 
-while getopts "M:T:S:b:g:e:s:v:R:" arg; do
+while getopts "M:T:S:b:d:g:e:s:v:R:" arg; do
    case "$arg" in
      T)
         TST_CMDFILES="${OPTARG}"
@@ -60,7 +61,6 @@ while getopts "M:T:S:b:g:e:s:v:R:" arg; do
           # Download LTP skipfile from specified URL
           if ! wget "${OPTARG}" -O "${SKIPFILE_TMP}"; then
             error_msg "Failed to fetch ${OPTARG}"
-            exit 1
           fi
         elif [ "${OPTARG##*.}" = "yaml" ]; then
           # yaml skipfile; use skipgen to generate a skipfile
@@ -72,6 +72,9 @@ while getopts "M:T:S:b:g:e:s:v:R:" arg; do
         ;;
      b)
         export BOARD="${OPTARG}"
+        ;;
+     d)
+        export LTP_TMPDIR="${OPTARG}"
         ;;
      g)
         export BRANCH="${OPTARG}"
@@ -86,6 +89,10 @@ while getopts "M:T:S:b:g:e:s:v:R:" arg; do
      # Slow machines need more timeout Default is 5min and multiply * MINUTES
      M) export LTP_TIMEOUT_MUL="${OPTARG}";;
      R) export PASSWD="${OPTARG}";;
+     *)
+        usage
+        error_msg "No flag ${OPTARG}"
+        ;;
   esac
 done
 
@@ -94,7 +101,6 @@ if [ -n "${SKIPFILE_YAML}" ]; then
     generate_skipfile
     if [ ! -f "${SKIPFILE_PATH}" ]; then
         error_msg "Skipfile ${SKIPFILE} does not exist";
-        exit 1
     fi
     SKIPFILE="-S ${SKIPFILE_PATH}"
 fi
@@ -148,9 +154,11 @@ prep_system() {
         systemctl stop systemd-timesyncd
     fi
     # userns07 requires kernel.unprivileged_userns_clone
-    if [ "$(sysctl -n kernel.unprivileged_userns_clone)" -eq 0 ]; then
+    if [ -f "/proc/sys/kernel/unprivileged_userns_clone" ]; then
         info_msg "Enabling kernel.unprivileged_userns_clone"
         sysctl -w kernel.unprivileged_userns_clone=1
+    else
+        info_msg "Kernel has no support of unprivileged_userns_clone"
     fi
 }
 

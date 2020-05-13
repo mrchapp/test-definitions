@@ -5,7 +5,7 @@ SNMPSET="/usr/bin/snmpset"
 CONTROL_OID=".1.3.6.1.4.1.318.1.1.4.4.2.1.3."
 
 usage() {
-    echo "usage: control-chamelium.py [-h] --hostname HOSTNAME --port PORT --command
+    printf "usage: control-chamelium.py [-h] --hostname HOSTNAME --port PORT --command
                             {off,on,reboot} [--delay DELAY]\n
 optional arguments:
   -h, --help            show this help message and exit
@@ -15,7 +15,7 @@ optional arguments:
                         What you wish to do with the port 'off', 'on',
                         'reboot'
   --delay DELAY         Delay in seconds when rebooting between power off and
-                        power on (default 10 seconds)"
+                        power on (default 10 seconds)\n"
 }
 
 send_command() {
@@ -27,7 +27,7 @@ send_command() {
         cmd="2"
     fi
 
-    ${SNMPSET} -v 1 -c private ${hostname} ${control_oid} i ${cmd}
+    ${SNMPSET} -v 1 -c private "${hostname}" "${control_oid}" i "${cmd}"
 }
 
 while [ $# -gt 0 ]
@@ -70,15 +70,15 @@ if [ -z "${hostname}" ] || [ -z "${port}" ] || [ -z "${command}" ]; then
     usage
     exit 1
 fi
-if [ "${command}" != "off" ] && [ ${command} != "on" ] && [ ${command} != "reboot" ]; then
+if [ "${command}" != "off" ] && [ "${command}" != "on" ] && [ "${command}" != "reboot" ]; then
     usage
     exit 1
 fi
 
 if [ "${command}" = "reboot" ]; then
     send_command "off"
-    sleep ${delay}
+    sleep "${delay}"
     send_command "on"
 else
-    send_command ${command}
+    send_command "${command}"
 fi

@@ -39,11 +39,34 @@ def map_result_to_lava(result):
 
 
 def natural_keys(text):
-    m = re.search('(\d+)', text)
+    m = re.search(r"(\d+)", text)
     if m:
         return int(m.group(1))
     else:
         return text
+
+
+def print_results(filename, ignore_tests):
+    currentsuite = ''
+    with open(filename, 'r') as f:
+        piglit_results = json.loads(f.read())
+        for test in sorted(piglit_results['tests'].keys()):
+            if test in ignore_tests:
+                continue
+            testname_parts = test.split('@')
+            testname = testname_parts[-1].replace(' ', '_')
+            suitename = '@'.join(testname_parts[0:-1])
+
+            if currentsuite != suitename:
+                if currentsuite:
+                    print('lava-test-set stop %s' % currentsuite)
+
+                currentsuite = suitename
+                print('lava-test-set start %s' % currentsuite)
+
+            result = map_result_to_lava(piglit_results['tests'][test]['result'])
+            print("%s %s" % (testname, result))
+    print('lava-test-set stop %s' % currentsuite)
 
 
 if __name__ == '__main__':
@@ -64,18 +87,6 @@ if __name__ == '__main__':
                     continue
                 piglit_result = None
                 full_f = os.path.join(root, name)
-                with open(full_f, 'r') as f:
-                    piglit_results = json.loads(f.read())
-                    for test in piglit_results.keys():
-                        if test in ignore_tests:
-                            continue
-                        result = map_result_to_lava(piglit_results[test]['result'])
-                        print("%s %s" % (test, result))
+                print_results(full_f, ignore_tests)
     else:
-        with open(sys.argv[1], 'r') as f:
-            piglit_results = json.loads(f.read())
-            for test in sorted(piglit_results['tests'].keys()):
-                if test in ignore_tests:
-                    continue
-                result = map_result_to_lava(piglit_results['tests'][test]['result'])
-                print("%s %s" % (test, result))
+        print_results(sys.argv[1], ignore_tests)

@@ -32,9 +32,8 @@ def publish_result(result_message_list, args):
     result_message = '\n'.join(result_message_list)
     try:
         f = open(args.result_file, 'a')
-        f.write("\n\n")
         f.write(result_message)
-        f.write("\n\n")
+        f.write("\n")
         f.close()
     except IOError as e:
         print(e)
@@ -110,6 +109,12 @@ def validate_yaml_contents(filepath, args):
                 result_message_list.append("\t%s has no content" % key)
                 publish_result(result_message_list, args)
                 return 1
+        # check if name has white spaces
+        if metadata_dict['name'].find(" ") > -1:
+            result_message_list.append("* METADATA [FAILED]: " + filepath)
+            result_message_list.append("\t'name' contains whitespace")
+            publish_result(result_message_list, args)
+            return 1
         result_message_list.append("* METADATA [PASSED]: " + filepath)
         publish_result(result_message_list, args)
         return 0
@@ -133,7 +138,7 @@ def validate_yaml_contents(filepath, args):
     except FileNotFoundError:
         publish_result(["* YAMLVALIDCONTENTS [PASSED]: " + filepath + " - deleted"], args)
         return 0
-    y = yaml.load(filecontent)
+    y = yaml.load(filecontent, Loader=yaml.FullLoader)
     if 'run' in y.keys():
         # test definition yaml file
         return validate_testdef_yaml(y, args)
@@ -154,7 +159,7 @@ def validate_yaml(filename, args):
         publish_result(["* YAMLVALID [PASSED]: " + filename + " - deleted"], args)
         return 0
     try:
-        yaml.load(filecontent)
+        yaml.load(filecontent, Loader=yaml.FullLoader)
         message = "* YAMLVALID: [PASSED]: " + filename
         print_stderr(message)
     except yaml.YAMLError:
@@ -193,6 +198,7 @@ def validate_external(cmd, filename, prefix, args):
     if status == 0:
         message = '* %s: [PASSED]: %s' % (prefix, filename)
         print_stderr(message)
+        publish_result([message], args)
     else:
         result_message_list = []
         result_message_list.append('* %s: [FAILED]: %s' % (prefix, filename))
@@ -205,6 +211,8 @@ def validate_external(cmd, filename, prefix, args):
 
 
 def validate_file(args, path):
+    if args.verbose:
+        print("Validating file: %s" % path)
     filetype = magic.from_file(path, mime=True)
     exitcode = 0
     # libmagic takes yaml as 'text/plain', so use file extension here.
@@ -290,6 +298,12 @@ if __name__ == '__main__':
                         default="build-error.txt",
                         help="Path to the file that contains results in case of failure",
                         dest="result_file")
+    parser.add_argument("-v",
+                        "--verbose",
+                        action="store_true",
+                        default=False,
+                        help="Make output more verbose",
+                        dest="verbose")
 
     args = parser.parse_args()
     main(args)

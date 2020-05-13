@@ -24,6 +24,7 @@ while getopts "s:v:" arg; do
    case "$arg" in
      s) SKIP_INSTALL="${OPTARG}";;
      v) LTP_VERSION="${OPTARG}";;
+     *) ;;
    esac
 done
 
@@ -57,7 +58,7 @@ parse_ltp_output() {
          | sed 's/://g; s/PASS/pass/'  >> "${RESULT_FILE}"
       grep -E ": FAILED|: SKIPPED|: UNSUPPORTED|: UNTESTED|: UNRESOLVED|: HUNG"  logfile."${EACH_TEST}"-test \
          | awk '{print $(NF-3)" "$(NF-1)}' \
-         | sed 's/://g; s/FAILED/fail/; s/SKIPPED/skip/; s/UNSUPPORTED/skip/; s/UNTESTED/skip/; s/UNRESOLVED/skip/; s/HUNG/skip/'  >> "${RESULT_FILE}"
+         | sed 's/://g; s/FAILED/fail/; s/SKIPPED/skip/; s/UNSUPPORTED/skip/; s/UNTESTED/skip/; s/UNRESOLVED/fail/; s/HUNG/skip/'  >> "${RESULT_FILE}"
     done
 
 }

@@ -52,6 +52,12 @@ parser() {
 
 create_out_dir "${OUTPUT}"
 install
+
+set +e
+command -v memtester
+exit_on_fail "memtester-existence-check"
+set -e
+
 for i in $(seq "${ITERATIONS}"); do
     output="${OUTPUT}/memtester-iter$i.txt"
 
