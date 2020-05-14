@@ -30,6 +30,6 @@ run:
         # Upload log file to artifactirial
         - if [ -f "${LOG_FILE}" -a -n "${UPLOAD_URL}" ]; then
         - gzip ${LOG_FILE} && LOG_FILE=${LOG_FILE}.gz || true
-        - [ -n "${TOKEN}" ] && TOKEN_OPT="-t \"${TOKEN}\""
+        - test -n "${TOKEN}"  && TOKEN_OPT="-t \"${TOKEN}\""
         - ${UPLOAD_TOOL} -a "${LOG_FILE}" -u "${UPLOAD_URL}" "${TOKEN_OPT}"; fi
 
