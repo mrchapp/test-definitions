@@ -57,7 +57,7 @@ if [ -z "${IGT_DIR}" ] || [ -z "${TEST_LIST}" ]; then
     usage
 fi
 
-if [ "${TEST_LIST}" == "CHAMELIUM" ]; then
+if [ "${TEST_LIST}" = "CHAMELIUM" ]; then
     if [ -z "${CHAMELIUM_IP}" ] || [ -z "${HDMI_DEV_NAME}" ]; then
         usage
     fi
