@@ -79,6 +79,10 @@ skiplist:
     branches:
       - 4.4
       - 4.9
+      - linux-4.4.y
+      - linux-4.9.y
+      - v4.4-rt
+      - v4.9-rt
     tests:
       - fanotify07
       - fanotify08
@@ -93,6 +97,10 @@ skiplist:
     branches:
       - 4.4
       - 4.9
+      - linux-4.4.y
+      - linux-4.9.y
+      - v4.4-rt
+      - v4.9-rt
     tests:
       - inotify07
 
@@ -106,6 +114,12 @@ skiplist:
       - 4.4
       - 4.9
       - 4.14
+      - linux-4.4.y
+      - linux-4.9.y
+      - linux-4.14.y
+      - v4.4-rt
+      - v4.9-rt
+      - v4.14-rt
     tests:
       - inotify08
 
@@ -283,3 +297,14 @@ skiplist:
       - dio22
       - dio23
       - dio26
+
+  - reason: >
+      skip long running LTP memcg_stress_test on all devices
+    url: https://bugs.linaro.org/show_bug.cgi?id=5657
+    environments: production
+    boards:
+      - all
+    branches:
+      - all
+    tests:
+      - memcg_stress

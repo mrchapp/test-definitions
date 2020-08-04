@@ -13,10 +13,9 @@ export QA_REPORTS_URL
 
 set +x
 lava_test_dir="$(find /lava-* -maxdepth 0 -type d -regex '/lava-[0-9]+' 2>/dev/null | sort | tail -1)"
-if test -f "${lava_test_dir}/secrets" && grep -q "ART_TOKEN" "${lava_test_dir}/secrets"; then
+if test -f "${lava_test_dir}/secrets"; then
         # shellcheck disable=SC1090
         . "${lava_test_dir}/secrets"
-        export ART_TOKEN
         export ARTIFACTORIAL_TOKEN
         export QA_REPORTS_TOKEN
 fi
@@ -27,7 +26,7 @@ set -x
 # shellcheck disable=SC1091
 . ../../lib/android-test-lib
 
-PKG_DEPS="git wget binutils curl bc xz-utils python python3 python3-scipy openjdk-8-jdk"
+PKG_DEPS="git wget binutils curl bc xz-utils python python3 python3-scipy"
 
 SKIP_INSTALL="false"
 
@@ -77,7 +76,7 @@ export OUT=${PWD}/out/target/product/${LUNCH_TARGET}/
 ./scripts/benchmarks/benchmarks_run_target.sh  --skip-build true --iterations "${ITERATIONS}" \
   --mode "${MODE}" --target-device "${LUNCH_TARGET}"
 
-if [ -n "${ART_TOKEN}" ]; then
+if [ -n "${QA_REPORTS_TOKEN}" ]; then
     git clone https://git.linaro.org/qa/post-build-report.git pbr; mkdir -p pbr/artifacts/
     cp ./*.json pbr/artifacts/
     wget "${SNAPSHOTS_URL}"/pinned-manifest.xml -O pbr/artifacts/pinned-manifest.xml
