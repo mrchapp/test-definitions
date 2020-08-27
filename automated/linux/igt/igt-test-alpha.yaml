@@ -28,7 +28,7 @@ run:
         - cd ./automated/linux/igt
         # Reboot Chamelium
         - echo -e "\nReboot the chamelium\n"
-        - ./control_chamelium.sh ${CHAMELIUM_REBOOT_ARG}
+        - ./control_chamelium.sh ${CHAMELIUM_REBOOT_ARG}; sleep 30
         - OPT="-d ${IGT_DIR} -t ${TEST_LIST}"
         - if [ "${TEST_LIST}" = "CHAMELIUM" ]; then
         # Check if Chamelium is available. ${CHAMELIUM_IP} is from LAVA device dictionary
@@ -64,4 +64,6 @@ run:
         - echo -e "\nUpload Chamelium log\n"
         - scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP}:/var/log/chameleond* .
         - tar -zcf chamelium.log.tar.gz chameleond*
-        - ${UPLOAD_TOOL} -a "chamelium.log.tar.gz" -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"
+        - LOG_FILE="`pwd`/chamelium.log.tar.gz"
+        - ls -l ${LOG_FILE}
+        - ${UPLOAD_TOOL} -v -a ${LOG_FILE} -u "${ARTIFACTORIAL_URL}" -t "${ARTIFACTORIAL_TOKEN}"
