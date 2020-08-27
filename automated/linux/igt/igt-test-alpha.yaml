@@ -25,11 +25,10 @@ params:
 
 run:
     steps:
+        - cd ./automated/linux/igt
         # Reboot Chamelium
         - echo -e "\nReboot the chamelium\n"
-        - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP} sh -c "/sbin/reboot"
-        - sleep 30
-        - cd ./automated/linux/igt
+        - ./control_chamelium.sh ${CHAMELIUM_REBOOT_ARG}
         - OPT="-d ${IGT_DIR} -t ${TEST_LIST}"
         - if [ "${TEST_LIST}" = "CHAMELIUM" ]; then
         # Check if Chamelium is available. ${CHAMELIUM_IP} is from LAVA device dictionary
