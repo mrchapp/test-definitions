@@ -56,6 +56,7 @@ run:
         - echo "************ Dump IGT test result ************";
         - echo "**********************************************";
         - if [ -f "${IGT_DIR}/results/results.json.bz2" ]; then cp ${IGT_DIR}/results/results.json.bz2 /root/dump-frames/ ; bunzip2 ${IGT_DIR}/results/results.json.bz2; fi
+        - cp ${IGT_DIR}/results/results.json /root/dump-frames/
         - ./print-test-result.py -f ${IGT_DIR}/results/results.json
         - if [ -n "${ARTIFACTORIAL_TOKEN}" -a -n "${ARTIFACTORIAL_URL}" ]; then
         - UPLOAD_TOOL="../../utils/upload-to-artifactorial.sh"
