@@ -87,5 +87,5 @@ fi
 
 # Run tests
 echo "Run ${TEST_LIST}"
-${TEST_SCRIPT} --dmesg-warn-level 0 --test-list "${IGT_DIR}"/"${TEST_LIST}" -l verbose | tee tmp.log
+${TEST_SCRIPT} --dmesg-warn-level 0 --test-list "${IGT_DIR}"/"${TEST_LIST}" --log-level verbose ${IGT_DIR}/results | tee tmp.log
 grep -e '^pass' -e '^skip' -e '^fail' tmp.log|awk -F':\ ' '{print $2" "$1}' > ${RESULT_LOG}
