@@ -28,7 +28,7 @@ generate_chamelium_testlist() {
     echo "Generate Chamelium test list"
     TEST_LIST=igt-chamelium-test.testlist
     # Skip Display Port/VGA and Suspend/Hibrnate related tests
-    ${TEST_SCRIPT} -l | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee "${IGT_DIR}"/"${TEST_LIST}"
+    ${TEST_SCRIPT} --list-all | grep chamelium | grep -v "dp\|vga\|suspend\|hibernate" | tee "${IGT_DIR}"/"${TEST_LIST}"
 }
 
 download_piglit() {
