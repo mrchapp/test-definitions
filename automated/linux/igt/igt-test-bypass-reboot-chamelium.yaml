@@ -45,8 +45,7 @@ run:
         - if [ -n "${CHAMELIUM_IP}" ]; then OPT="${OPT} -c ${CHAMELIUM_IP}"; fi
         - if [ -n "${HDMI_DEV_NAME}" ]; then OPT="${OPT} -h ${HDMI_DEV_NAME}"; fi
         - fi
-        #- ./igt-test.sh ${OPT}
-        - ./igt-test-runner-dmesg-warn-level.sh ${OPT}
+        - ./igt-test.sh ${OPT}
         # Delete Chameliumd log
         - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP} /usr/bin/uptime
         - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@${CHAMELIUM_IP} sh -c "echo '' > /var/log/chameleond"
