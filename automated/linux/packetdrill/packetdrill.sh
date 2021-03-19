@@ -127,16 +127,17 @@ run_test() {
 }
 
 ! check_root && error_msg "This script must be run as root"
+create_out_dir "${OUTPUT}"
+
+get_test_program "${TEST_GIT_URL}" "${TEST_DIR}" "${TEST_PROG_VERSION}" "${TEST_PROGRAM}"
 
 # Install and run test
 if [ "${SKIP_INSTALL}" = "true" ] || [ "${SKIP_INSTALL}" = "True" ]; then
     info_msg "Skip installing package dependency for ${TEST_PROG_VERSION}"
 else
     install
+    build_install_tests
 fi
 
-get_test_program "${TEST_GIT_URL}" "${TEST_DIR}" "${TEST_PROG_VERSION}" "${TEST_PROGRAM}"
-build_install_tests
-create_out_dir "${OUTPUT}"
 run_test
 parse_output
