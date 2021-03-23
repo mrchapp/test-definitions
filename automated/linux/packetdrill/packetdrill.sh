@@ -123,9 +123,10 @@ build_install_tests() {
 run_test() {
 #    pushd "${TEST_DIR}/gtests/net" || exit 1
 #    python3 ./packetdrill/run_all.py -v -l -L  2>&1 | tee -a "${RESULT_LOG}"
+    pushd "${TEST_DIR}" || exit 1
     pwd
-    cd ..
-    python3 ./packetdrill/run_all.py -v -l -L  2>&1 | tee -a "${RESULT_LOG}"
+#    cd ..
+    python3 run_all.py -v -l -L  2>&1 | tee -a "${RESULT_LOG}"
     popd || exit 1
 }
 
